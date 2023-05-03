@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "EyeController",
+  "version": "${version}",
+  "name": "EyeController",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/kinghouser/EyeController"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/EyeController/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.kinghouser.eyecontroller.client.EyeControllerClient"
+    ],
+    "main": [
+      "com.kinghouser.eyecontroller.EyeController"
+    ]
+  },
+  "mixins": [
+    "EyeController.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
