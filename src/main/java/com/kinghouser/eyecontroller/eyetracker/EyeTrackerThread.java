@@ -7,7 +7,8 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.videoio.VideoCapture;
 
-import java.io.File;
+import java.io.*;
+import java.net.Socket;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +26,6 @@ public class EyeTrackerThread extends Thread {
             // String path = jarDirPath;
             System.load("/Users/kinghouser/IdeaProjects/EyeController/run/mods" + File.separator + "lib" + File.separator + "libopencv_java460.dylib");
 
-            EyeTracker.ready = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,7 +46,8 @@ public class EyeTrackerThread extends Thread {
         // CascadeClassifier eyeDetector = new CascadeClassifier(xmlPath + File.separator + "haarcascades/haarcascade_eye.xml");
 
         // Open the video capture device
-        VideoCapture capture = new VideoCapture(0);
+        VideoCapture capture = new VideoCapture(1);
+        // capture.open(0);
 
         // Loop over the frames in the video stream
         while (capture.isOpened()) {
@@ -90,6 +91,8 @@ public class EyeTrackerThread extends Thread {
                 Imgproc.circle(frame, center, radius, new Scalar(255,0,255), 3, 8, 0 );
             }
         }
+        capture.release();
+        System.out.println("hie");
     }
 
     public static Rect getLargest(MatOfRect faces) {
@@ -107,5 +110,34 @@ public class EyeTrackerThread extends Thread {
 
     public static int getCenterY(Rect face) {
         return face.y + (face.height / 2);
+    }
+
+    public static class Client {
+
+        private Socket socket;
+
+        public Client() {
+            try {
+                socket = new Socket("localhost", 0);
+                System.out.println("Connected to server");
+
+                InputStream input = socket.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                OutputStream output = socket.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
+
+                while (socket.isConnected()) {
+                    String message = reader.readLine();
+                    if (message != null) {
+                        System.out.println("Received message from server: " + message);
+                        String[] data = message.split(",");
+                        EyeTrackerUtils.updateCamera(Integer.parseInt(data[0]), Integer.parseInt(data[1]), Integer.parseInt(data[2]), Integer.parseInt(data[3]));
+                    }
+                }
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
