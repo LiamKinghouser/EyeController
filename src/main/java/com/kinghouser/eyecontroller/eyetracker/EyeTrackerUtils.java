@@ -2,9 +2,6 @@ package com.kinghouser.eyecontroller.eyetracker;
 
 import net.minecraft.client.MinecraftClient;
 
-import java.io.File;
-import java.io.IOException;
-
 public class EyeTrackerUtils {
 
     private static boolean hasAligned = false;
@@ -35,8 +32,8 @@ public class EyeTrackerUtils {
     }
 
     private static int convertToMinecraftPitch(int y, int height) {
-        double mappedValueInRangeMinus90To90 = ((double) y / height) * 180.0 - 90.0;
-        return (int) mappedValueInRangeMinus90To90;
+        double mappedValue = ((double) y / height) * 180.0 - 90.0;
+        return (int) mappedValue;
     }
 
     private static int convertToMinecraftYaw(int x, int width) {
